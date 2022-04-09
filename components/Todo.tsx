@@ -78,7 +78,7 @@ function Todo({ authUser }: Props) {
   };
 
   const deleteFor = (id: string) => async () => {
-    const newTodos = todos.filter(todo => todo.id !== id);
+    const newTodos = todos.filter((todo) => todo.id !== id);
     await setDoc(userDoc, newTodos);
   };
 
@@ -98,9 +98,7 @@ function Todo({ authUser }: Props) {
                 onChange={toggleFor(todo.id)}
                 checked={todo.checked}
               />{' '}
-              {todo.title}
-              {' '}
-              <button onClick={deleteFor(todo.id)}>x</button>
+              {todo.title} <button onClick={deleteFor(todo.id)}>x</button>
             </label>
           </li>
         ))}
