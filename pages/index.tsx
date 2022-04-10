@@ -13,7 +13,7 @@ function App() {
     <AuthContext.Consumer>
       {({ authUser }) => (
         <div className="flex flex-col flex-grow">
-          <div className="flex flex-col flex-grow-0">
+          <div className="flex-grow-0">
             Hello <b>{authUser.displayName}</b>
           </div>
           <Todo authUser={authUser} />
