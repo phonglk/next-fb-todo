@@ -4,7 +4,8 @@ export default function AddBtn(props: { onClick: () => void }) {
   return (
     <button
       onClick={props.onClick}
-      className="relative h-12 px-6 mx-2 overflow-hidden bg-blue-500 border rounded group
+      className="relative h-12 px-6 ml-2 overflow-hidden bg-blue-500 border rounded group
+        flex-shrink-0
         before:absolute
         before:inset-0
         before:bg-blue-600
@@ -17,7 +18,7 @@ export default function AddBtn(props: { onClick: () => void }) {
     >
       <div
         aria-hidden="true"
-        className="transition duration-300 group-hover:-translate-y-12"
+        className="text-lg transition duration-300 group-hover:-translate-y-12"
       >
         <div className="flex items-center justify-center h-12">
           <span className="text-white">Add</span>

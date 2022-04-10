@@ -1,13 +1,7 @@
-import React, { ChangeEvent, ComponentType, useRef, useState } from 'react';
+import React from 'react';
 import firebase from '../firebase/clientApp';
+import { User } from 'firebase/auth';
 import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  User,
-} from 'firebase/auth';
-import {
-  collection,
   doc,
   DocumentData,
   FirestoreDataConverter,
@@ -17,8 +11,10 @@ import {
   SnapshotOptions,
   WithFieldValue,
 } from 'firebase/firestore';
-import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
-import AddBtn from './AddBtn';
+import { useDocument } from 'react-firebase-hooks/firestore';
+import TodoItem, { TodoItemObject } from './TodoItem';
+import _ from 'lodash';
+import Input from './Input';
 
 const firestore = getFirestore(firebase);
 
@@ -26,20 +22,14 @@ type Props = {
   authUser: User;
 };
 
-type TodoItem = {
-  id: string;
-  title: string;
-  checked: boolean;
-};
-
-const todoItemConverter: FirestoreDataConverter<TodoItem[]> = {
-  toFirestore(todoItems: WithFieldValue<TodoItem[]>): DocumentData {
+const todoItemConverter: FirestoreDataConverter<TodoItemObject[]> = {
+  toFirestore(todoItems: WithFieldValue<TodoItemObject[]>): DocumentData {
     return { todos: JSON.stringify(todoItems) };
   },
   fromFirestore(
     snapshot: QueryDocumentSnapshot,
     options: SnapshotOptions
-  ): TodoItem[] {
+  ): TodoItemObject[] {
     const data = snapshot.data(options);
     try {
       return JSON.parse(data.todos);
@@ -55,20 +45,11 @@ function Todo({ authUser }: Props) {
   );
   const [todosDoc, todosLoading, todosError] = useDocument(userDoc);
 
-  const inputRef = useRef<HTMLInputElement>(null);
-
   const todos = todosDoc?.data() ?? [];
 
-  const onAddClick = async () => {
-    const title = inputRef.current.value.trim();
-    const newTodos = todos.concat({
-      title,
-      checked: false,
-      id: new Date().getTime() + title,
-    });
+  const addTodo = async (todo: TodoItemObject) => {
+    const newTodos = todos.concat(todo);
     await setDoc(userDoc, newTodos);
-    inputRef.current.value = '';
-    inputRef.current.focus();
   };
 
   const toggleFor = (id: string) => async () => {
@@ -87,24 +68,15 @@ function Todo({ authUser }: Props) {
     <div>
       {todosError && <strong>Error: {JSON.stringify(todosError)}</strong>}
       {todosLoading && <span>Collection: Loading...</span>}
-      <input
-        type="text"
-        ref={inputRef}
-        className="w-1/2 px-4 py-3 my-4 font-thin rounded shadow"
-      />
-      <AddBtn onClick={onAddClick} />
+      <Input addTodo={addTodo} />
       <ul>
         {todos.map((todo) => (
-          <li key={todo.id}>
-            <label>
-              <input
-                type="checkbox"
-                onChange={toggleFor(todo.id)}
-                checked={todo.checked}
-              />{' '}
-              {todo.title} <button onClick={deleteFor(todo.id)}>x</button>
-            </label>
-          </li>
+          <TodoItem
+            key={todo.id}
+            todo={todo}
+            onToggle={toggleFor(todo.id)}
+            onDelete={deleteFor(todo.id)}
+          />
         ))}
       </ul>
     </div>
