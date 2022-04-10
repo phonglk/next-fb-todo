@@ -15,11 +15,11 @@ export default function LoadableContainer(props: {
         className={classNames(
           'absolute z-10 flex items-center content-center w-full h-full bg-white transition-opacity',
           isLoading
-            ? 'opacity-75 pointer-events-auto'
-            : 'opacity-0 pointer-events-none'
+            ? 'opacity-75 pointer-events-auto visible'
+            : 'opacity-0 pointer-events-none invisible'
         )}
       >
-        <Spinner className="flex flex-grow w-full" />
+        {isLoading && <Spinner className="flex flex-grow w-full" />}
       </div>
       {children}
     </div>
