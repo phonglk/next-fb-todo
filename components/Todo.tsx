@@ -79,8 +79,6 @@ function Todo({ authUser }: Props) {
     await setDoc(userDoc, newTodos);
   };
 
-  console.log({ todos, uiTodos, pendingList });
-
   return (
     <div className="flex flex-col flex-grow">
       {todosError && <strong>Error: {JSON.stringify(todosError)}</strong>}

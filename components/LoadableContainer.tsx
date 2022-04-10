@@ -11,11 +11,16 @@ export default function LoadableContainer(props: {
   const { isLoading, className, spinnerClassName, children } = props;
   return (
     <div className={classNames('relative', className)}>
-      {isLoading && (
-        <div className="absolute z-10 flex items-center content-center w-full h-full bg-white opacity-75">
-          <Spinner className="flex flex-grow w-full" />
-        </div>
-      )}
+      <div
+        className={classNames(
+          'absolute z-10 flex items-center content-center w-full h-full bg-white transition-opacity',
+          isLoading
+            ? 'opacity-75 pointer-events-auto'
+            : 'opacity-0 pointer-events-none'
+        )}
+      >
+        <Spinner className="flex flex-grow w-full" />
+      </div>
       {children}
     </div>
   );
