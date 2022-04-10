@@ -18,6 +18,7 @@ import {
   WithFieldValue,
 } from 'firebase/firestore';
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
+import AddBtn from './AddBtn';
 
 const firestore = getFirestore(firebase);
 
@@ -84,11 +85,14 @@ function Todo({ authUser }: Props) {
 
   return (
     <div>
-      <h2>Your Todo List:</h2>
       {todosError && <strong>Error: {JSON.stringify(todosError)}</strong>}
       {todosLoading && <span>Collection: Loading...</span>}
-      <input type="text" ref={inputRef} />
-      <button onClick={onAddClick}>add</button>
+      <input
+        type="text"
+        ref={inputRef}
+        className="w-1/2 px-4 py-3 my-4 font-thin rounded shadow"
+      />
+      <AddBtn onClick={onAddClick} />
       <ul>
         {todos.map((todo) => (
           <li key={todo.id}>

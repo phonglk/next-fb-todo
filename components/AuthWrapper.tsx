@@ -6,17 +6,14 @@ import {
   signInWithPopup,
   User,
 } from 'firebase/auth';
+import AuthContext from '../contexts/AuthContext';
 
 const auth = getAuth(firebase);
 const provider = new GoogleAuthProvider();
 
 type Props = {
-  Authorised: ComponentType<{
-    authUser: User;
-  }>;
-  Unauthorised: ComponentType<{
-    doLogin: () => void;
-  }>;
+  Authorised: ComponentType;
+  Unauthorised: ComponentType;
 };
 function AuthWrapper({ Unauthorised, Authorised }: Props) {
   const [authUser, setAuthUser] = useState(auth.currentUser);
@@ -26,10 +23,12 @@ function AuthWrapper({ Unauthorised, Authorised }: Props) {
       setAuthUser(user);
     });
   };
-  if (authUser === null) {
-    return <Unauthorised doLogin={doLogin} />;
-  }
-  return <Authorised authUser={authUser} />;
+  const comp = authUser ? <Authorised /> : <Unauthorised />;
+  return (
+    <AuthContext.Provider value={{ authUser, doLogin }}>
+      {comp}
+    </AuthContext.Provider>
+  );
 }
 
 export default AuthWrapper;
