@@ -18,3 +18,7 @@ a {
 * {
   box-sizing: border-box;
 }
+
+#__next {
+  @apply flex flex-col flex-grow;
+}

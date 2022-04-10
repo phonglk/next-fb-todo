@@ -7,6 +7,7 @@ import React, {
   useState,
 } from 'react';
 import AddBtn from './AddBtn';
+import LoadableContainer from './LoadableContainer';
 import Spinner from './Spinner';
 import { TodoItemObject } from './TodoItem';
 
@@ -34,12 +35,19 @@ export default function Input(props: {
 
   const onAddClick = async () => {
     if (isLoading) return;
-    if (!inputValue.trim()) {
+    const title = inputValue.trim();
+
+    if (!title) {
       setError('You must enter your todo item');
       inputRef.current.focus();
       return;
     }
-    const title = inputValue;
+    if (title.length > 50) {
+      setError(`Your todo should not exceed 50 chars (${title.length})`);
+      inputRef.current.focus();
+      return;
+    }
+
     const newTodo = {
       title,
       checked: false,
@@ -52,7 +60,7 @@ export default function Input(props: {
     inputRef.current.focus();
   };
   return (
-    <div className="flex my-4">
+    <LoadableContainer className="flex flex-grow-0 my-4" isLoading={isLoading}>
       <div className="flex flex-col w-full">
         <input
           type="text"
@@ -72,6 +80,6 @@ export default function Input(props: {
       </div>
       {isLoading && <Spinner className="ml-3 w-11 h-11" />}
       <AddBtn onClick={onAddClick} />
-    </div>
+    </LoadableContainer>
   );
 }

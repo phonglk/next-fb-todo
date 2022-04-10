@@ -12,8 +12,10 @@ function App() {
   return (
     <AuthContext.Consumer>
       {({ authUser }) => (
-        <div>
-          Hello <b>{authUser.displayName}</b>
+        <div className="flex flex-col flex-grow">
+          <div className="flex flex-col flex-grow-0">
+            Hello <b>{authUser.displayName}</b>
+          </div>
           <Todo authUser={authUser} />
         </div>
       )}
