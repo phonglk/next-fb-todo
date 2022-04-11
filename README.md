@@ -1,7 +1,10 @@
 # NextJS + Firebase Todo List Example
 
 Working demo: https://next-fb-todo.vercel.app/
+
 ![image](https://user-images.githubusercontent.com/2889732/162725395-7470b6f5-5b84-47d1-ae4c-673a6e0a234a.png)
+
+https://user-images.githubusercontent.com/2889732/162726589-11fddcc8-152d-44ef-92ba-03c71bce04e6.mp4
 
 ## Why?
 
