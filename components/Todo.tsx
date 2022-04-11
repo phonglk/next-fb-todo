@@ -19,6 +19,8 @@ type Props = {
   authUser: User;
 };
 
+const TODO_LIMIT = 20;
+
 const todoItemConverter: FirestoreDataConverter<TodoItemObject[]> = {
   toFirestore(todoItems: WithFieldValue<TodoItemObject[]>): DocumentData {
     return { todos: JSON.stringify(todoItems) };
@@ -55,6 +57,10 @@ function Todo({ authUser }: Props) {
     setPendingList((list) => list.filter((todo) => todo !== id));
 
   const addTodo = async (todo: TodoItemObject) => {
+    if (todos.length >= TODO_LIMIT) {
+      alert(`You cannot create more than ${TODO_LIMIT} todos`);
+      return;
+    }
     const newTodos = todos.concat(todo);
     setPending(todo.id);
     await setDoc(userDoc, newTodos);
@@ -76,11 +82,32 @@ function Todo({ authUser }: Props) {
     await setDoc(userDoc, newTodos);
   };
 
+  const removeCompletedTodos = async () => {
+    const completed = todos.filter((todo) => todo.checked);
+    if (!completed.length) {
+      alert('Nothing to remove!');
+      return;
+    }
+    if (!confirm(`Do you want to remove ${completed.length} todos`)) return;
+
+    const newTodos = todos.filter((todo) => !todo.checked);
+    setPendingList((list) => list.concat(completed.map((todo) => todo.id)));
+    await setDoc(userDoc, newTodos);
+  };
+
   return (
     <div className="flex flex-col flex-grow">
       {todosError && <strong>Error: {JSON.stringify(todosError)}</strong>}
       {todosLoading && <span>Collection: Loading...</span>}
       <Input addTodo={addTodo} />
+      <div className="flex flex-grow-0">
+        <button
+          className="p-2 my-2 mr-1 bg-blue-300 rounded"
+          onClick={removeCompletedTodos}
+        >
+          Remove all completed task
+        </button>
+      </div>
       <div className="flex flex-col flex-grow overflow-auto basis-0">
         <ul className="">
           {uiTodos.map((todo) => (
