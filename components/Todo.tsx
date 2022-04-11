@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import firebase from '../firebase/clientApp';
+import firebase, { firestore } from '../firebase/clientApp';
 import { User } from 'firebase/auth';
 import {
   doc,
   DocumentData,
   FirestoreDataConverter,
-  getFirestore,
   QueryDocumentSnapshot,
   setDoc,
   SnapshotOptions,
@@ -15,8 +14,6 @@ import { useDocument } from 'react-firebase-hooks/firestore';
 import TodoItem, { TodoItemObject } from './TodoItem';
 import _ from 'lodash';
 import Input from './Input';
-
-const firestore = getFirestore(firebase);
 
 type Props = {
   authUser: User;
