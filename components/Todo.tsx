@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import firebase, { firestore } from '../firebase/clientApp';
 import { User } from 'firebase/auth';
 import {
@@ -44,6 +44,7 @@ function Todo({ authUser }: Props) {
   );
   const [todosDoc, todosLoading, todosError] = useDocument(userDoc);
   const [pendingList, setPendingList] = useState([]);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const todos = todosDoc?.data() ?? [];
   const uiTodos = todos.map((todo) => ({
@@ -56,6 +57,13 @@ function Todo({ authUser }: Props) {
   const unsetPending = (id: string) =>
     setPendingList((list) => list.filter((todo) => todo !== id));
 
+  const scrollToBottom = () => {
+    const $container = scrollContainerRef.current;
+    if (!$container) return;
+    const listHeight = $container.children[0].clientHeight;
+    $container.scrollTo(0, listHeight);
+  };
+
   const addTodo = async (todo: TodoItemObject) => {
     if (todos.length >= TODO_LIMIT) {
       alert(`You cannot create more than ${TODO_LIMIT} todos`);
@@ -63,6 +71,7 @@ function Todo({ authUser }: Props) {
     }
     const newTodos = todos.concat(todo);
     setPending(todo.id);
+    scrollToBottom();
     await setDoc(userDoc, newTodos);
     unsetPending(todo.id);
   };
@@ -108,7 +117,10 @@ function Todo({ authUser }: Props) {
           Remove all completed task
         </button>
       </div>
-      <div className="flex flex-col flex-grow overflow-auto basis-0">
+      <div
+        className="flex flex-col flex-grow overflow-auto basis-0"
+        ref={scrollContainerRef}
+      >
         <ul className="">
           {uiTodos.map((todo) => (
             <TodoItem
