@@ -13,6 +13,7 @@ export type TodoItemObject = {
   id: string;
   title: string;
   checked: boolean;
+  status?: 'Waiting' | 'Doing' | 'Blocked';
 };
 
 export type TodoItemUIObject = TodoItemObject & {
@@ -23,13 +24,21 @@ export default function TodoItem(props: {
   todo: TodoItemUIObject;
   onDelete: () => void;
   onToggle: () => void;
+  onUpdateStatus: (status: string) => Promise<void>;
 }) {
-  const { todo, onToggle, onDelete } = props;
+  const { todo, onToggle, onDelete, onUpdateStatus } = props;
+  const [status, setStatus] = useState((todo.status ?? 'Waiting') as string);
 
   const confirmDelete = () => {
     if (!confirm('Are you sure you want to delete this todo ?')) return;
     onDelete();
   };
+
+  useEffect(() => {
+    console.log({ status, todo });
+    if (todo.status === status) return;
+    onUpdateStatus(status);
+  }, [onUpdateStatus, todo, status]);
 
   return (
     <li className="flex w-full">
@@ -39,8 +48,11 @@ export default function TodoItem(props: {
       >
         <div
           className={classNames(
-            'flex items-center pr-2 font-light bg-white border-2 rounded hover:border-blue-300 grow',
-            todo.isActionPending && 'bg-gray-200'
+            'flex items-center pr-2 font-light bg-white border-2 rounded hover:border-blue-400 grow',
+            todo.isActionPending && '!bg-gray-300',
+            status === 'Doing' && 'bg-green-100 border-green-300',
+            status === 'Blocked' && 'bg-red-100 border-red-300',
+            todo.checked && '!bg-gray-200 border-gray-300'
           )}
         >
           <label className="flex items-center w-full h-full py-2 pl-2 grow">
@@ -62,6 +74,21 @@ export default function TodoItem(props: {
             </span>
           </label>
           <div className="relative flex-shrink-0 ">
+            <select
+              className="mr-2 rounded w-28"
+              value={status}
+              onChange={(event) => setStatus(event.currentTarget.value)}
+            >
+              {todo.checked ? (
+                <option>Done</option>
+              ) : (
+                <>
+                  <option value="Waiting">Waiting</option>
+                  <option value="Doing">Doing</option>
+                  <option value="Blocked">Blocked</option>
+                </>
+              )}
+            </select>
             <NoteBtn todo={todo} />
             <button
               onClick={confirmDelete}

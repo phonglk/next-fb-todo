@@ -91,6 +91,16 @@ function Todo({ authUser }: Props) {
     await setDoc(userDoc, newTodos);
   };
 
+  const updateStatusFor = (id: string) => async (status: string) => {
+    const newTodos = todos.map((todo) =>
+      todo.id === id ? { ...todo, status } : todo
+    );
+    console.log({ id, newTodos });
+    setPending(id);
+    await setDoc(userDoc, newTodos);
+    unsetPending(id);
+  };
+
   const removeCompletedTodos = async () => {
     const completed = todos.filter((todo) => todo.checked);
     if (!completed.length) {
@@ -128,6 +138,7 @@ function Todo({ authUser }: Props) {
               todo={todo}
               onToggle={toggleFor(todo.id)}
               onDelete={deleteFor(todo.id)}
+              onUpdateStatus={updateStatusFor(todo.id)}
             />
           ))}
         </ul>
