@@ -48,7 +48,7 @@ export default function TodoItem(props: {
       >
         <div
           className={classNames(
-            'flex items-center pr-2 font-light bg-white border-2 rounded hover:border-blue-400 grow',
+            'transition-all duration-300 flex items-center pr-2 font-light bg-white border-2 rounded hover:border-blue-400 grow',
             todo.isActionPending && '!bg-gray-300',
             status === 'Doing' && 'bg-green-100 border-green-300',
             status === 'Blocked' && 'bg-red-100 border-red-300',
