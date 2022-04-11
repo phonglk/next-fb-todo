@@ -78,7 +78,6 @@ export default function Input(props: {
           {error}
         </span>
       </div>
-      {isLoading && <Spinner className="ml-3 w-11 h-11" />}
       <AddBtn onClick={onAddClick} />
     </LoadableContainer>
   );
